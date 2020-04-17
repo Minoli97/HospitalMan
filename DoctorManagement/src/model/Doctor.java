@@ -39,7 +39,6 @@ public class Doctor {
 	   preparedStmt.setInt(1, 0);    
 	   preparedStmt.setString(2, doctorName);    
 	   preparedStmt.setString(3, address);    
-	   //preparedStmt.setDouble(4, Double.parseDouble(price));    
 	   preparedStmt.setString(4, phoneNum);
 	   preparedStmt.setString(5, email);
 	   preparedStmt.setString(6, gender);
@@ -86,7 +85,7 @@ public class Doctor {
 				String doctorID = Integer.toString(rs.getInt("doctorID"));
 				String doctorName = rs.getString("doctorName");
 				String address = rs.getString("address");
-				String phoneNum = Integer.toString(rs.getInt("phoneNum"));
+				String phoneNum = rs.getString("phoneNum");
 				String email = rs.getString("email");
 				String gender = rs.getString("gender");
 				String age = Integer.toString(rs.getInt("age"));
@@ -142,7 +141,6 @@ public class Doctor {
 			// binding values
 			preparedStmt.setString(1, doctorName);
 			preparedStmt.setString(2, address);
-			// preparedStmt.setDouble(3, Double.parseDouble(price));
 			preparedStmt.setString(3, phoneNum);
 			preparedStmt.setString(4, email);
 			preparedStmt.setString(5, gender);
