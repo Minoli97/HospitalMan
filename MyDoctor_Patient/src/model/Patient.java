@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 
+
 public class Patient  {
 
 	public Connection connect()
@@ -36,13 +37,13 @@ public class Patient  {
 	 if (con == null)
 	 {return "Error while connecting to the database for inserting."; }
 	 // create a prepared statement
-	 String query = " insert into patientdetails(patientId,name,gender,phone,NIC,email,username,password)" + " values (?, ?, ?,?,?,?,?,?)";
+	 String query = "insert into patientdetails(patientId,name,gender,phone,NIC,email,username,password)" + " values (?, ?, ?,?,?,?,?,?)";
 	 PreparedStatement preparedStmt = con.prepareStatement(query);
 	 // binding values
 	 preparedStmt.setInt(1, 0);
 	 preparedStmt.setString(2, name);
 	 preparedStmt.setString(3, gender);
-	 preparedStmt.setInt(4, Integer.parseInt(phone));
+	 preparedStmt.setString(4, phone);
 	 preparedStmt.setString(5, NIC);
 	 preparedStmt.setString(6, email);
 	 preparedStmt.setString(7, username);
@@ -81,7 +82,7 @@ public String readDetails()
 	 String patientId = Integer.toString(rs.getInt("patientId"));
 	 String name = rs.getString("name");
 	 String gender = rs.getString("gender");
-	 String phone = Integer.toString(rs.getInt("phone"));
+	 String phone =  rs.getString("phone");
 	 String NIC = rs.getString("NIC");
 	 String email = rs.getString("email");
 	 String username = rs.getString("username");
@@ -125,7 +126,7 @@ public String updateDetails(String patientId, String name, String gender,String 
 	 // binding values
 	 preparedStmt.setString(1, name);
 	 preparedStmt.setString(2, gender);
-	 preparedStmt.setInt(3, Integer.parseInt(phone)); 
+	 preparedStmt.setString(3,phone); 
 	 preparedStmt.setString(4, NIC);
 	 preparedStmt.setString(5, email);
 	 preparedStmt.setString(6, username);
@@ -168,10 +169,97 @@ public String deleteDetails(String patientId)
 	 {
 	 output = "Error while deleting the item.";
 	 System.err.println(e.getMessage());
+	 System.out.println("hi");
 	 }
 	 return output;
 	 }
+
+
+
+public boolean readLogin(String username, String password) {
+	try{
+		Connection con = connect();
+		
+		if (con == null){
+		
+			System.out.println("execured up before");
+			return false;
+		}
 	
+	//		System.out.println("execured up after");
+
+	// create a prepared statement
+		String query = "select password from patientdetails where username = '"+username+"'";
+		PreparedStatement preparedStmt = con.prepareStatement(query);
+		Statement stmt = con.createStatement();
+		ResultSet rs = stmt.executeQuery(query);
+
+
+		while (rs.next()){
+
+			String pass = rs.getString("password");
+
+			if(pass.equals(password)){
+				System.out.println("true from db");
+				return true;
+			}else{
+				System.out.println("false from db");
+			}
+		}
+		
+		con.close();
+
+	}catch (Exception e){
+			System.err.println(e.getMessage());
+	}
+	
+	return false;
+		
+}
+
+
+
+public boolean adminLogin(String Admin_username, String Admin_password) {
+	try{
+		Connection con = connect();
+		
+		if (con == null){
+		
+			System.out.println("execured up before");
+			return false;
+		}
+	
+	//		System.out.println("execured up after");
+
+	// create a prepared statement
+		String query = "select Admin_password from admin_details where Admin_username = '"+Admin_username+"'";
+		PreparedStatement preparedStmt = con.prepareStatement(query);
+		Statement stmt = con.createStatement();
+		ResultSet rs = stmt.executeQuery(query);
+
+
+		while (rs.next()){
+
+			String pass = rs.getString("Admin_password");
+
+			if(pass.equals(Admin_password)){
+				System.out.println("true from db");
+				return true;
+			}else{
+				System.out.println("false from db");
+			}
+		}
+		
+		con.close();
+
+	}catch (Exception e){
+			System.err.println(e.getMessage());
+	}
+	
+	return false;
+		
+}
+
 
 }
 	
