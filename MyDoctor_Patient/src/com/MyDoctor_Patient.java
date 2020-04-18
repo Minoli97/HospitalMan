@@ -25,6 +25,8 @@ return itemObj.readDetails();
 }
 
 
+
+
 @POST
 @Path("/")
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -60,8 +62,6 @@ return output;
 }
 
 
-
-
 @DELETE
 @Path("/")
 @Consumes(MediaType.APPLICATION_XML)
@@ -78,5 +78,43 @@ return output;
 }
 
 
+@POST
+@Path("/log")
+@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+@Produces(MediaType.TEXT_PLAIN)
+public String readLogin(@FormParam("username") String username,
+			 @FormParam("password") String password)
+{
+	System.out.println(username + " and " + password);
+	boolean output = itemObj.readLogin(username, password);
+	System.out.println(output);
+	if(output) {
+		return "Login success!";
+		
+		
+	}else {
+		return "Invalid credentials!";
+	}
+	
+}
+
+@POST
+@Path("/adminlog")
+@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+@Produces(MediaType.TEXT_PLAIN)
+public String adminLogin(@FormParam("Admin_username") String Admin_username,
+			 @FormParam("Admin_password") String Admin_password)
+{
+	System.out.println(Admin_username + " and " + Admin_password);
+	boolean output = itemObj.adminLogin(Admin_username, Admin_password);
+	System.out.println(output);
+	if(output) {
+		return "Login success!\n\n\n\n" + itemObj.readDetails();
+		
+	}else {
+		return "Invalid credentials!";
+	}
+	
+}
 }
 
