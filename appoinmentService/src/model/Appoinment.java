@@ -167,6 +167,87 @@ output += "<td><input name=\"btnUpdate\" type=\"button\" value=\"Update\" class=
   return output;  
   }
 	
+	public boolean readLogin(String username, String password) {
+		try{
+			Connection con = connect();
+			
+			if (con == null){
+				System.out.println("bl");
+				System.out.println("execured up before");
+				return false;
+			}
+		
+//			System.out.println("execured up after");
+
+		// create a prepared statement
+			String query = "select password from patientdetails where username = '"+username+"'";
+			PreparedStatement preparedStmt = con.prepareStatement(query);
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+
+
+			while (rs.next()){
 	
+				String pass = rs.getString("password");
 	
+				if(pass.equals(password)){
+					System.out.println("true from db");
+					return true;
+				}else{
+					System.out.println("false from db");
+				}
+			}
+			
+			con.close();
+
+		}catch (Exception e){
+				System.err.println(e.getMessage());
+		}
+		
+		return false;
+			
+	}
+	
+	public boolean readLoginAdmin(String Admin_username, String Admin_password) {
+		try{
+			Connection con = connect();
+			
+			if (con == null){
+				System.out.println("bl");
+				System.out.println("execured up before");
+				return false;
+			}
+		
+//			System.out.println("execured up after");
+
+		// create a prepared statement
+			String query = "select Admin_password from admin where Admin_username = '"+Admin_username+"'";
+			PreparedStatement preparedStmt = con.prepareStatement(query);
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+
+
+			while (rs.next()){
+	
+				String password = rs.getString("Admin_password");
+	
+				if(password.equals(Admin_password)){
+					System.out.println("true from db");
+					return true;
+				}else{
+					System.out.println("false from db");
+				}
+			}
+			
+			con.close();
+
+		}catch (Exception e){
+				System.err.println(e.getMessage());
+		}
+		
+		return false;
+			
+	}
 }
+	
+	

@@ -82,7 +82,7 @@ public class payment {
 				output += "<td><input name=\"btnUpdate\" type=\"button\" value=\"Update\" class=\"btn btn-secondary\"></td>"
 						+ "<td><form method=\"post\" action=\"items.jsp\">"
 						+ "<input name=\"btnRemove\" type=\"submit\" value=\"Remove\" class=\"btn btn-danger\">"
-						+ "<input name=\"itemID\" type=\"hidden\" value=\"" + pay_id + "\">" + "</form></td></tr>";
+						+ "<input name=\"pay_id\" type=\"hidden\" value=\"" + pay_id + "\">" + "</form></td></tr>";
 			}
 			con.close();
 			// Complete the html table
@@ -158,75 +158,134 @@ public class payment {
 	}
 	
 	
-	
-	
-	
-	public String insertLogin(String Username, String Password) {
-		String output = "";
-		try {
-			Connection con = connect();
-			if (con == null) {
-				return "Error while connecting to the database for inserting.";
-			}
-			// create a prepared statement
-			String query = " insert into log_in(login_id,Username,Password)" + " values (?, ?, ?)";
-			PreparedStatement preparedStmt = con.prepareStatement(query);
-			// binding values
-			preparedStmt.setInt(1, 0);
-			preparedStmt.setString(2, Username);
-			preparedStmt.setString(3, Password);
-			
-			// execute the statement
-			preparedStmt.execute();
-			con.close();
-			output = "Logged in successfully";
 
-		} catch (Exception e) {
-			output = "Error while inserting the login details.";
-			System.err.println(e.getMessage());
-		}
-		return output;
-	}
 	
-	public String readLogin() {
-		String output = "";
-		try {
+//	public String insertLogin(String Username, String Password) {
+//		String output = "";
+//		try {
+//			Connection con = connect();
+//			if (con == null) {
+//				return "Error while connecting to the database for inserting.";
+//			}
+//			// create a prepared statement
+//			String query = " insert into log_in(login_id,Username,Password)" + " values (?, ?, ?)";
+//			PreparedStatement preparedStmt = con.prepareStatement(query);
+//			// binding values
+//			preparedStmt.setInt(1, 0);
+//			preparedStmt.setString(2, Username);
+//			preparedStmt.setString(3, Password);
+//			
+//			// execute the statement
+//			preparedStmt.execute();
+//			con.close();
+//			output = "Logged in successfully";
+//
+//		} catch (Exception e) {
+//			output = "Error while inserting the login details.";
+//			System.err.println(e.getMessage());
+//		}
+//		return output;
+//	}
+		
+	
+	
+	public boolean readLogin(String Patient_username, String Patient_password) {
+		try{
 			Connection con = connect();
-			if (con == null) {
-				return "Error while connecting to the database for reading.";
-			}
 			
-			// Prepare the html table to be displayed
-			output = "<table border=\"1\"><tr><th>login_id</th><th>Username</th><th>Password</th><th>Update</th><th>Remove</th></tr>";
-			String query = "select * from log_in";
+			if (con == null){
+				System.out.println("executed up before");
+				return false;
+			}
+		
+
+
+		// create a prepared statement
+			String query = "select Patient_password from patientdetails where Patient_username = '"+Patient_username+"'";
+			PreparedStatement preparedStmt = con.prepareStatement(query);
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
-			// iterate through the rows in the result set
-			while (rs.next()) {
-				String login_id = Integer.toString(rs.getInt("login_id"));
-				String Username = rs.getString("Username");
-				String Password = rs.getString("Password");
-			
-				// Add into the html table
-				output += "<tr><td>" + login_id + "</td>";
-				output += "<td>" + Username + "</td>";
-				output += "<td>" + Password + "</td>";
-				
-				// buttons
-				output += "<td><input name=\"btnUpdate\" type=\"button\" value=\"Update\" class=\"btn btn-secondary\"></td>"
-						+ "<td><form method=\"post\" action=\"items.jsp\">"
-						+ "<input name=\"btnRemove\" type=\"submit\" value=\"Remove\" class=\"btn btn-danger\">"
-						+ "<input name=\"itemID\" type=\"hidden\" value=\"" + login_id + "\">" + "</form></td></tr>";
+
+
+			while (rs.next()){
+	
+				String password = rs.getString("Patient_password");
+	
+				if(password.equals(Patient_password)){
+					System.out.println("true from db");
+					return true;
+				}else{
+					System.out.println("false from db");
+				}
 			}
+			
 			con.close();
-			// Complete the html table
-			output += "</table>";
-		} catch (Exception e) {
-			output = "Error while reading the login details.";
-			System.err.println(e.getMessage());
+
+		}catch (Exception e){
+				System.err.println(e.getMessage());
 		}
-		return output;
+		
+		return false;
+			
 	}
 
+	
+	
 
+public boolean readAdminlogin(String Admin_username, String Admin_password) {
+	try{
+		Connection con = connect();
+		
+		if (con == null){
+			System.out.println("executed up before");
+			return false;
+		}
+	
+
+
+	// create a prepared statement
+		String query = "select Admin_password from admin_details where Admin_username = '"+Admin_username+"'";
+		PreparedStatement preparedStmt = con.prepareStatement(query);
+		Statement stmt = con.createStatement();
+		ResultSet rs = stmt.executeQuery(query);
+
+
+		while (rs.next()){
+
+			String password = rs.getString("Admin_password");
+
+			if(password.equals(Admin_password)){
+				System.out.println("true from db");
+				return true;
+			}else{
+				System.out.println("false from db");
+			}
+		}
+		
+		con.close();
+
+	}catch (Exception e){
+			System.err.println(e.getMessage());
+	}
+	
+	return false;
+		
 }
+}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
