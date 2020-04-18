@@ -39,7 +39,6 @@ public class Doctor {
 	   preparedStmt.setInt(1, 0);    
 	   preparedStmt.setString(2, doctorName);    
 	   preparedStmt.setString(3, address);    
-	   //preparedStmt.setDouble(4, Double.parseDouble(price));    
 	   preparedStmt.setString(4, phoneNum);
 	   preparedStmt.setString(5, email);
 	   preparedStmt.setString(6, gender);
@@ -86,7 +85,7 @@ public class Doctor {
 				String doctorID = Integer.toString(rs.getInt("doctorID"));
 				String doctorName = rs.getString("doctorName");
 				String address = rs.getString("address");
-				String phoneNum = Integer.toString(rs.getInt("phoneNum"));
+				String phoneNum = rs.getString("phoneNum");
 				String email = rs.getString("email");
 				String gender = rs.getString("gender");
 				String age = Integer.toString(rs.getInt("age"));
@@ -142,7 +141,6 @@ public class Doctor {
 			// binding values
 			preparedStmt.setString(1, doctorName);
 			preparedStmt.setString(2, address);
-			// preparedStmt.setDouble(3, Double.parseDouble(price));
 			preparedStmt.setString(3, phoneNum);
 			preparedStmt.setString(4, email);
 			preparedStmt.setString(5, gender);
@@ -188,4 +186,93 @@ public class Doctor {
 		return output;
 	}
 
+	
+	
+	//login
+	public boolean readLogin(String username, String password) {
+		try {
+			
+			Connection con = connect();
+			
+			if(con == null){
+				
+				System.out.println("executed up before");
+				
+				return false;
+			}
+			
+			// create a prepared statement 
+			
+			String query = "select password from doctor where username = '" + username +"'";
+			PreparedStatement preparedStmt = con.prepareStatement(query);
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			
+			while(rs.next()) {
+				String pswd = rs.getString("password");
+				
+				if(pswd.contentEquals(password)) {
+					
+					System.out.println("true from db");
+					
+					return true;
+					
+				}else {
+					System.out.println("false from db");
+				}
+			}
+			
+			con.close();
+			
+		}catch(Exception e) {
+			System.out.println(e.getMessage());
+		}
+		
+		return false;
+	}
+	
+	
+	//admin login
+	
+	public boolean readAdminLogin(String Admin_username, String Admin_password) {
+		try {
+			Connection con = connect();
+			
+			if(con == null){
+				
+				System.out.println("executed up before");
+				
+				return false;
+			}
+			
+			// create a prepared statement 
+			
+			String query = "select Admin_password from admin_details where Admin_username = '" + Admin_username +"'";
+			PreparedStatement preparedStmt = con.prepareStatement(query);
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			
+			while(rs.next()) {
+				String pswd = rs.getString("Admin_password");
+				
+				if(pswd.contentEquals(Admin_password)) {
+					
+					System.out.println("true from db");
+					
+					return true;
+					
+				}else {
+					System.out.println("false from db");
+				}
+			}
+			
+			con.close();
+			
+		}catch(Exception e) {
+			System.out.println(e.getMessage());
+		}
+		
+		return false;
+	}
+	
 }

@@ -82,5 +82,41 @@ public class DoctorService {
 		 
 		 String output = doctorObj.deleteItem(doctorID); 
 		 
-		 return output; }
+		 return output; 
+		 
+	}
+	
+	@POST 
+	@Path("/log")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.TEXT_PLAIN)
+	
+	public String readLogin(@FormParam("username") String username, @FormParam("password") String password ) {
+		System.out.println(username + "and" + password);
+		
+		boolean output = doctorObj.readLogin(username, password);
+		System.out.println(output);
+		if(output) {
+			return "Login success!";
+		}else {
+			return "invalid";
+		}
+	}
+	
+	@POST 
+	@Path("/adminlog")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.TEXT_PLAIN)
+	
+	public String readAdminLogin(@FormParam("Admin_username") String Admin_username, @FormParam("Admin_password") String Admin_password ) {
+		System.out.println(Admin_username + "and" + Admin_password);
+		
+		boolean output = doctorObj.readAdminLogin(Admin_username, Admin_password);
+		System.out.println(output);
+		if(output) {
+			return "Login success!";
+		}else {
+			return "invalid";
+		}
+	}
 }
