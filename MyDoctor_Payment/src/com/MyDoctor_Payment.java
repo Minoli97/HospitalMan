@@ -28,13 +28,13 @@ public class MyDoctor_Payment {
 	 } 
 	
 	
-	@GET
-	@Path("/log")
-	@Produces(MediaType.TEXT_HTML)
-	public String readLogin()
-	 {
-	 return paymentObj.readPayment();
-	 } 
+//	@GET
+//	@Path("/log")
+//	@Produces(MediaType.TEXT_HTML)
+//	public String readLogin()
+//	 {
+//	 return paymentObj.readPayment();
+//	 } 
 	
 	@POST
 	@Path("/pay")
@@ -52,17 +52,17 @@ public class MyDoctor_Payment {
 	}
 	
 	
-	@POST
-	@Path("/log")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces(MediaType.TEXT_PLAIN)
-	public String insertLogin(@FormParam("Username") String Username,
-	 @FormParam("Password") String Password)
-	{
-	 String output = paymentObj.insertLogin(Username, Password);
-	return output;
-	
-	}
+//	@POST
+//	@Path("/log")
+//	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+//	@Produces(MediaType.TEXT_PLAIN)
+//	public String insertLogin(@FormParam("Username") String Username,
+//							  @FormParam("Password") String Password)
+//	{
+//	 String output = paymentObj.insertLogin(Username, Password);
+//	return output;
+//	
+//	}
 	
 	
 	
@@ -100,7 +100,51 @@ public class MyDoctor_Payment {
 	 String output = paymentObj.deletePayment(pay_id);
 	return output;
 	}
-
+	
+	
+	@POST
+	@Path("/log")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.TEXT_PLAIN)
+	public String readLogin(@FormParam("Patient_username") String Patient_username,
+							@FormParam("Patient_password") String Patient_password)
+	{
+		System.out.println(Patient_username + " and " + Patient_password);
+		boolean output = paymentObj.readLogin(Patient_username, Patient_password);
+		System.out.println(output);
+		if(output) {
+			return "Login success!";
+		}else {
+			return "Invalid credentials!";
+		}
+		
+	}
+	
+	
+	
+	@POST
+	@Path("/logadmin")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.TEXT_PLAIN)
+	public String readAdminlogin(@FormParam("Admin_username") String Admin_username,
+				 @FormParam("Admin_password") String Admin_password)
+	{
+		System.out.println(Admin_username + " and " + Admin_password);
+		boolean output = paymentObj.readLogin(Admin_username, Admin_password);
+		System.out.println(output);
+		if(output) {
+			return "Login success!\n\n\n\n" + paymentObj.readPayment();
+		}else {
+			return "Invalid credentials!";
+		}
+		
+	}
+	
+	
+	
+	
+	
+	
 	
 
 }
