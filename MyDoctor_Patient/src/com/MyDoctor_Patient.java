@@ -61,26 +61,14 @@ public String readDetails(@HeaderParam("token") String token) {
 @Path("/uinsert")
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @Produces(MediaType.TEXT_PLAIN)
-public String insertDetails(@HeaderParam("token") String token,@FormParam("name") String name,@FormParam("gender") String gender,@FormParam("phone") String phone,
+public String insertDetails(@FormParam("name") String name,@FormParam("gender") String gender,@FormParam("phone") String phone,
 		@FormParam("NIC") String NIC,@FormParam("email") String email,@FormParam("username") String username,@FormParam("password") String password)
  
 {
+	String output = itemObj.insertDetails(name, gender,phone,NIC,email,username,password);
+	return output;
 
-	if(token != null) {
-		User u = JwtUtils.parseToken(token);
-		
-		if(u != null && u.getUserType().equals("patient")) {
-			 String output = itemObj.insertDetails(name,gender,phone,NIC,email,username, password);
-			return output;
-		}
-		else {
-				return "UnAuthorized user";
-			}
-					}
-		else {
-			return "UnAuthorized user";
-		}
-	
+
 	
 }
 
@@ -89,7 +77,7 @@ public String insertDetails(@HeaderParam("token") String token,@FormParam("name"
 @Path("/uupdate")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.TEXT_PLAIN)
-public String updateDetails(String update_patient)
+public String updateDetails(@HeaderParam("token") String token,String update_patient)
 {
 	//Convert the input string to a JSON object
 	 JsonObject itemObject = new JsonParser().parse(update_patient).getAsJsonObject();
@@ -103,7 +91,18 @@ public String updateDetails(String update_patient)
 	 String username = itemObject.get("username").getAsString();
 	 String password = itemObject.get("password").getAsString();
 	 String output = itemObj.updateDetails(patientId, name, gender,phone,NIC,email,username,password);
-	return output;
+	 if(token != null) {
+			User u = JwtUtils.parseToken(token);
+			
+			if(u != null && u.getUserType().equals("patient")) {
+				return output;
+			}else {
+				return "Un Authorized User";
+			}
+		}else {
+			return "Un Authorized User";
+		}
+
 }
 
 
@@ -111,7 +110,7 @@ public String updateDetails(String update_patient)
 @Path("/udelete")
 @Consumes(MediaType.APPLICATION_XML)
 @Produces(MediaType.TEXT_PLAIN)
-public String deleteDetails(String delete_patient)
+public String deleteDetails(@HeaderParam ("token")String token,String delete_patient)
 {
 	//Convert the input string to an XML document
 	 Document doc = Jsoup.parse(delete_patient, "", Parser.xmlParser());
@@ -119,7 +118,19 @@ public String deleteDetails(String delete_patient)
 	//Read the value from the element <itemID>
 	 String patientId = doc.select("patientId").text();
 	 String output = itemObj.deleteDetails(patientId);
-	return output;
+	
+	
+	if(token != null) {
+		User u = JwtUtils.parseToken(token);
+		
+		if(u != null && u.getUserType().equals("patient")) {
+			return output;				
+		}else {
+			return "Un Authorized Administrator";
+		}
+	}else {
+		return "Un Authorized Administrator";
+	}
 }
 
 
@@ -143,7 +154,6 @@ public String readLogin(@FormParam("username") String username,
 	}
 	
 }
-
 
 //@POST
 //@Path("/adminlog")
