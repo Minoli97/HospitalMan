@@ -53,7 +53,7 @@ public class MyDoctor_Hospital
 		@Path("/")
 		@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 		@Produces(MediaType.TEXT_PLAIN)
-		public String insertHospital(@HeaderParam("token") String token,
+		public String insertHospital(
 									@FormParam("hospital_Name") String hospital_Name,
 									 @FormParam("hospital_Address") String hospital_Address,
 									 @FormParam("hospital_ContactNo") String hospital_ContactNo,
@@ -65,18 +65,8 @@ public class MyDoctor_Hospital
 		 
 		{
 
-		if(token != null) {
-			User u = JwtUtils.parseToken(token);
-			
-			if(u != null && u.getUserType().equals("hospital")) {
-				String output = hospitalObj.insertHospital(hospital_Name, hospital_Address, hospital_ContactNo,hospital_Email, hospital_Details, hospital_Charge, hospital_Username, hospital_Password);
-				return output;
-			}else {
-				return "UnAuthorized user";
-			}
-		}else {
-			return "UnAuthorized user";
-		}
+			String output = hospitalObj.insertHospital(hospital_Name, hospital_Address, hospital_ContactNo, hospital_Email, hospital_Details, hospital_Charge, hospital_Username, hospital_Password);
+			return output;
 		
 		
 		
@@ -90,7 +80,7 @@ public class MyDoctor_Hospital
 		@Path("/")
 		@Consumes(MediaType.APPLICATION_JSON)
 		@Produces(MediaType.TEXT_PLAIN)
-		public String updateHospital(String hospitalData)
+		public String updateHospital(@HeaderParam("token") String token,String hospitalData)
 
 		{
 		
@@ -108,25 +98,66 @@ public class MyDoctor_Hospital
 			 String hospital_Charge= hospitalObject.get("hospital_Charge").getAsString();
 			 String hospital_Username= hospitalObject.get("hospital_Username").getAsString();
 			 String hospital_Password= hospitalObject.get("hospital_Password").getAsString();
+			 String output=  hospitalObj.updateHospital(hospital_Id, hospital_Name, hospital_Address, hospital_ContactNo, hospital_Email, hospital_Details, hospital_Charge, hospital_Username, hospital_Password);
 			 
-			 String output = hospitalObj.updateHospital(hospital_Id, hospital_Name, hospital_Address, hospital_ContactNo,hospital_Email, hospital_Details,hospital_Charge,hospital_Username,hospital_Password);
-		return output;
-		}	
+			 if(token != null) {
+					User u = JwtUtils.parseToken(token);
+					
+					if(u != null && u.getUserType().equals("hospital")) {
+						return output;
+					}else {
+						return "Un Authorized User";
+					}
+				}else {
+					return "Un Authorized User";
+				}
+		}
+		
+		
+		
 		
 		@DELETE
 		@Path("/")
 		@Consumes(MediaType.APPLICATION_XML)
 		@Produces(MediaType.TEXT_PLAIN)
-		public String deleteHospital(String hospitalData)
-		{
-		//Convert the input string to an XML document
-		 Document doc = Jsoup.parse(hospitalData, "", Parser.xmlParser());
+		public String deleteHospital(@HeaderParam ("token")String token,String hospitalData) {
+			// Convert the input string to an XML document
+			Document doc = Jsoup.parse(hospitalData, "", Parser.xmlParser());
 
-		//Read the value from the element <itemID>
-		 String hospital_Id = doc.select("hospital_Id").text();
-		 String output = hospitalObj.deleteHospital(hospital_Id);
-		return output;
+			// Read the value from the element <hospital_id>
+			String hospital_Id = doc.select("hospital_Id").text();
+			String output = hospitalObj.deleteHospital(hospital_Id);
+			
+			if(token != null) {
+				User u = JwtUtils.parseToken(token);
+				
+				if(u != null && u.getUserType().equals("hospital")) {
+					return output;				
+				}else {
+					return "Un Authorized user";
+				}
+			}else {
+				return "Un Authorized user";
+			}
+			
+			
 		}
+		
+		
+//		@DELETE
+//		@Path("/")
+//		@Consumes(MediaType.APPLICATION_XML)
+//		@Produces(MediaType.TEXT_PLAIN)
+//		public String deleteHospital(String hospitalData)
+//		{
+//		//Convert the input string to an XML document
+//		 Document doc = Jsoup.parse(hospitalData, "", Parser.xmlParser());
+//
+//		//Read the value from the element <itemID>
+//		 String hospital_Id = doc.select("hospital_Id").text();
+//		 String output = hospitalObj.deleteHospital(hospital_Id);
+//		return output;
+//		}
 
 		/////////userlogin
 		@POST
