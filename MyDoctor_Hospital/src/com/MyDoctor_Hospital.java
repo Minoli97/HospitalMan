@@ -1,6 +1,9 @@
 package com;
 
 import model.Hospital;
+import model.User;
+import utils.JwtUtils;
+
 //For REST Service
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -15,22 +18,43 @@ import org.jsoup.nodes.Document;
 public class MyDoctor_Hospital
 	{
 		Hospital hospitalObj = new Hospital();
-	
+		
+		
 		@GET
 		@Path("/")
 		@Produces(MediaType.TEXT_HTML)
-		public String readHospitals()
-		{
-			return hospitalObj.readHospitals();
+		public String readPayment(@HeaderParam("token") String token) {
+			{
+
+				if(token != null) {
+					User u = JwtUtils.parseToken(token);
+					
+					if(u != null && u.getUserType().equals("Admin")) {
+						return hospitalObj.readHospitals();				
+					}else {
+						return "UnAuthorized admin";
+					}
+				}else {
+					return "UnAuthorized admin";
+				}
+				
+			}
 		}
-		
-		
-		
+	
+//		@GET
+//		@Path("/")
+//		@Produces(MediaType.TEXT_HTML)
+//		public String readHospitals()
+//		{
+//			return hospitalObj.readHospitals();
+//		}
+						
 		@POST
 		@Path("/")
 		@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 		@Produces(MediaType.TEXT_PLAIN)
-		public String insertHospital(@FormParam("hospital_Name") String hospital_Name,
+		public String insertHospital(@HeaderParam("token") String token,
+									@FormParam("hospital_Name") String hospital_Name,
 									 @FormParam("hospital_Address") String hospital_Address,
 									 @FormParam("hospital_ContactNo") String hospital_ContactNo,
 									 @FormParam("hospital_Email") String hospital_Email,
@@ -40,11 +64,28 @@ public class MyDoctor_Hospital
 									 @FormParam("hospital_Charge") String hospital_Charge)
 		 
 		{
-		 String output = hospitalObj.insertHospital(hospital_Name, hospital_Address, hospital_ContactNo,hospital_Email, hospital_Details, hospital_Charge, hospital_Username, hospital_Password);
-		return output;
+
+		if(token != null) {
+			User u = JwtUtils.parseToken(token);
+			
+			if(u != null && u.getUserType().equals("hospital")) {
+				String output = hospitalObj.insertHospital(hospital_Name, hospital_Address, hospital_ContactNo,hospital_Email, hospital_Details, hospital_Charge, hospital_Username, hospital_Password);
+				return output;
+			}else {
+				return "UnAuthorized user";
+			}
+		}else {
+			return "UnAuthorized user";
 		}
 		
 		
+		
+		
+		}
+	
+		
+	
+				
 		@PUT
 		@Path("/")
 		@Consumes(MediaType.APPLICATION_JSON)
@@ -87,5 +128,60 @@ public class MyDoctor_Hospital
 		return output;
 		}
 
-
+		/////////userlogin
+		@POST
+		@Path("/log")
+		@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+		@Produces(MediaType.TEXT_PLAIN)
+		public String readLogin(@FormParam("hospital_Username") String hospital_Username,
+					 @FormParam("hospital_Password") String hospital_Password)
+		{
+			System.out.println(hospital_Username + " and " + hospital_Password);
+			User user = hospitalObj.readLogin(hospital_Username, hospital_Password);
+			
+			if(user != null) {
+				return JwtUtils.generateToken(user);
+			}else {
+				return "Invalid credentials!";
+			}
+			
+		}
+		
+		@POST
+		@Path("/logadmin")
+		@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+		@Produces(MediaType.TEXT_PLAIN)
+		public String readAdminlogin(@FormParam("Admin_username") String Admin_username,
+					 @FormParam("Admin_password") String Admin_password)
+		{
+			System.out.println(Admin_username + " and " + Admin_password);
+			User user = hospitalObj.readAdminlogin(Admin_username, Admin_password);
+			
+			if(user != null) {
+				return JwtUtils.generateToken(user);
+				//return "Login success!\n\n\n\n" + hospitalObj.readHospitals();
+			}else {
+				return "Invalid credentials!";
+			}
+			
+		}
+		
+		//Admin login
+//		@POST
+//		@Path("/adminlog")
+//		@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+//		@Produces(MediaType.TEXT_PLAIN)
+//		public String readAdminLogin(@FormParam("Admin_username") String Admin_username,
+//					 @FormParam("Admin_password") String Admin_password)
+//		{
+//			System.out.println(Admin_username + " and " + Admin_password);
+//			boolean output = hospitalObj.readAdminLogin(Admin_username, Admin_password);
+//			System.out.println(output);
+//			if(output) {
+//				return "Login success!\n\n\n\n" + hospitalObj.readHospitals();
+//			}else {
+//				return "Invalid credentials!";
+//			}
+//			
+//		}
 }
