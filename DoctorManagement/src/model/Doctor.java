@@ -189,7 +189,7 @@ public class Doctor {
 	
 	
 	//login
-	public boolean readLogin(String username, String password) {
+	public User readLogin(String username, String password) {
 		try {
 			
 			Connection con = connect();
@@ -198,24 +198,26 @@ public class Doctor {
 				
 				System.out.println("executed up before");
 				
-				return false;
+				return null;
 			}
 			
 			// create a prepared statement 
 			
-			String query = "select password from doctor where username = '" + username +"'";
+			String query = "select * from doctor where username = '" + username +"'";
 			PreparedStatement preparedStmt = con.prepareStatement(query);
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			
 			while(rs.next()) {
+				System.out.println(rs.getString("doctorID"));
+				User u = new User(rs.getString("doctorID"), rs.getString("doctorName"), rs.getString("username"), "doctor");
 				String pswd = rs.getString("password");
 				
 				if(pswd.contentEquals(password)) {
 					
 					System.out.println("true from db");
 					
-					return true;
+					return u;
 					
 				}else {
 					System.out.println("false from db");
@@ -228,7 +230,7 @@ public class Doctor {
 			System.out.println(e.getMessage());
 		}
 		
-		return false;
+		return null;
 	}
 	
 	
@@ -237,8 +239,7 @@ public class Doctor {
 	public boolean readAdminLogin(String Admin_username, String Admin_password) {
 		try {
 			Connection con = connect();
-			
-			if(con == null){
+				if(con == null){
 				
 				System.out.println("executed up before");
 				
@@ -253,8 +254,11 @@ public class Doctor {
 			ResultSet rs = stmt.executeQuery(query);
 			
 			while(rs.next()) {
+				//System.out.println(rs.getString("Admin_id"));
+	
+				//User u = new User(rs.getString("Admin_id"), rs.getString("Admin_name"), rs.getString("Admin_username"), "Admin");
 				String pswd = rs.getString("Admin_password");
-				
+			
 				if(pswd.contentEquals(Admin_password)) {
 					
 					System.out.println("true from db");
