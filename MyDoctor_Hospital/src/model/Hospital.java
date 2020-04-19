@@ -21,7 +21,7 @@ public class Hospital {
 		return con;
 	}
 
-	public String insertHospital(String hospital_Name, String hospital_Address, String hospital_ContactNo, String hospital_Email, String hospital_Details, String hospital_Charge, String hospital_Username, String hospital_Password)
+	public String insertHospital( String hospital_Name,String hospital_Address, String hospital_ContactNo, String hospital_Email, String hospital_Details, String hospital_Charge, String hospital_Username, String hospital_Password)
 	{
 		String output = "";
 		try {
