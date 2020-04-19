@@ -21,7 +21,7 @@ public class Hospital {
 		return con;
 	}
 
-	public String insertHospital(String hospital_Name, String hospital_Address, String hospital_ContactNo, String hospital_Email, String hospital_Details, String hospital_Charge, String hospital_Username, String hospital_Password)
+	public String insertHospital( String hospital_Name,String hospital_Address, String hospital_ContactNo, String hospital_Email, String hospital_Details, String hospital_Charge, String hospital_Username, String hospital_Password)
 	{
 		String output = "";
 		try {
@@ -172,4 +172,95 @@ public class Hospital {
 
 	}
 
+	
+	
+	
+	
+	
+	
+	
+	public boolean readLogin(String hospital_Username, String hospital_Password) {
+		try{
+			Connection con = connect();
+			
+			if (con == null){
+				System.out.println("bl");
+				System.out.println("execured up before");
+				return false;
+			}
+		
+//			System.out.println("execured up after");
+
+		// create a prepared statement
+			String query = "select hospital_Password from sign_up where hospital_Username = '"+hospital_Username+"'";
+			PreparedStatement preparedStmt = con.prepareStatement(query);
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+
+
+			while (rs.next()){
+	
+				String password = rs.getString("hospital_Password");
+	
+				if(password.equals(hospital_Password)){
+					System.out.println("true from db");
+					return true;
+				}else{
+					System.out.println("false from db");
+				}
+			}
+			
+			con.close();
+
+		}catch (Exception e){
+				System.err.println(e.getMessage());
+		}
+		
+		return false;
+			
+	}
+	
+	////////Admin login chck
+	public boolean readAdminLogin(String Admin_username, String Admin_password) {
+		try{
+			Connection con = connect();
+			
+			if (con == null){
+				System.out.println("bl");
+				System.out.println("execured up before");
+				return false;
+			}
+		
+//			System.out.println("execured up after");
+
+		// create a prepared statement
+			String query = "select Admin_password from admin_details where Admin_username = '"+Admin_username+"'";
+			PreparedStatement preparedStmt = con.prepareStatement(query);
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+
+
+			while (rs.next()){
+	
+				String password = rs.getString("Admin_password");
+	
+				if(password.equals(Admin_password)){
+					System.out.println("true from db");
+					return true;
+				}else{
+					System.out.println("false from db");
+				}
+			}
+			
+			con.close();
+
+		}catch (Exception e){
+				System.err.println(e.getMessage());
+		}
+		
+		return false;
+			
+	}
 }
+
+
