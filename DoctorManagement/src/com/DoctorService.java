@@ -1,6 +1,9 @@
 package com;
 
 import model.Doctor;
+import model.User;
+import utils.JwtUtils;
+
 //For REST Service
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -27,18 +30,37 @@ public class DoctorService {
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.TEXT_PLAIN)
-	public String insertItem(@FormParam("doctorName") String doctorName, @FormParam("address") String address,
+	public String insertItem(@HeaderParam("token") String token, @FormParam("doctorName") String doctorName, @FormParam("address") String address,
 			@FormParam("phoneNum") String phoneNum, @FormParam("email") String email,
 			@FormParam("gender") String gender, @FormParam("age") String age, @FormParam("status") String status,
 			@FormParam("specialization") String specialization, @FormParam("hospitalWork") String hospitalWork,
 			@FormParam("details") String details, @FormParam("username") String username,
 			@FormParam("password") String password)
+	
 	{
-		String output = doctorObj.insertItem(doctorName, address, phoneNum, email, gender, age, status, specialization,
-				hospitalWork, details, username, password);
-		return output;
+		if(token != null) {
+			User u = JwtUtils.parseToken(token);
+			
+			if(u != null && u.getUserType().equals("doctor")) {
+				String output = doctorObj.insertItem(doctorName, address, phoneNum, email, gender, age, status, specialization,
+						hospitalWork, details, username, password);
+				return output;
+			}else {
+				return "UnAuthorized user";
+			}
+		}else {
+			return "UnAuthorized user";
+		}
+		
 	}
-
+//	{
+//		String output = doctorObj.insertItem(doctorName, address, phoneNum, email, gender, age, status, specialization,
+//				hospitalWork, details, username, password);
+//		return output;
+//	}
+	
+	
+	
 	
 	@PUT 
 	@Path("/") 
@@ -94,13 +116,15 @@ public class DoctorService {
 	public String readLogin(@FormParam("username") String username, @FormParam("password") String password ) {
 		System.out.println(username + "and" + password);
 		
-		boolean output = doctorObj.readLogin(username, password);
-		System.out.println(output);
-		if(output) {
-			return "Login success!";
-		}else {
-			return "invalid";
+		User user = doctorObj.readLogin(username, password);
+
+		if (user != null) {
+			return JwtUtils.generateToken(user);
+
+		} else {
+			return "Invalid doctors!";
 		}
+
 	}
 	
 	@POST 
