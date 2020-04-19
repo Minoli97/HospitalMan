@@ -167,32 +167,35 @@ output += "<td><input name=\"btnUpdate\" type=\"button\" value=\"Update\" class=
   return output;  
   }
 	
-	public boolean readLogin(String username, String password) {
+	public User readLogin(String username, String password) {
 		try{
 			Connection con = connect();
 			
 			if (con == null){
 				System.out.println("bl");
 				System.out.println("execured up before");
-				return false;
+				return null;
 			}
 		
 //			System.out.println("execured up after");
 
 		// create a prepared statement
-			String query = "select password from patientdetails where username = '"+username+"'";
+			String query = "select * from patientdetails where username = '"+username+"'";
 			PreparedStatement preparedStmt = con.prepareStatement(query);
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 
 
 			while (rs.next()){
+				System.out.println(rs.getString("patientId"));
+				
+				User u = new User(rs.getString("patientId"), rs.getString("name"), rs.getString("username"), "appointment");
 	
 				String pass = rs.getString("password");
 	
 				if(pass.equals(password)){
 					System.out.println("true from db");
-					return true;
+					return u;
 				}else{
 					System.out.println("false from db");
 				}
@@ -204,7 +207,7 @@ output += "<td><input name=\"btnUpdate\" type=\"button\" value=\"Update\" class=
 				System.err.println(e.getMessage());
 		}
 		
-		return false;
+		return null;
 			
 	}
 	

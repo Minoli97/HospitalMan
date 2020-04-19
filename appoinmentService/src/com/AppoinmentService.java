@@ -1,6 +1,9 @@
 package com;
 
 import model.Appoinment;
+import model.User;
+import utils.JwtUtils;
+
 //For REST Service 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -15,26 +18,59 @@ import org.jsoup.nodes.Document;
 public class AppoinmentService {
 	Appoinment app = new Appoinment();
 
+//	@GET
+//	@Path("/read")
+//	@Produces(MediaType.TEXT_HTML)
+//	public String readAppoinment() {
+//		return app.readAppoinment();
+//	}
+	
 	@GET
-	@Path("/y")
+	@Path("/pay")
 	@Produces(MediaType.TEXT_HTML)
-	public String readAppoinment() {
-		return app.readAppoinment();
+	public String readPayment(@HeaderParam("token") String token) {
+		{
+
+			if(token != null) {
+				User u = JwtUtils.parseToken(token);
+				
+				if(u != null && u.getUserType().equals("Admin")) {
+					return app.readAppoinment();				
+				}else {
+					return "UnAuthorized user";
+				}
+			}else {
+				return "UnAuthorized user";
+			}
+			
+		}
 	}
 
 	@POST
-	@Path("/x")
+	@Path("/insert")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.TEXT_PLAIN)
-	public String insertAppoinment(@FormParam("patientName") String patientName,
+	public String insertAppoinment(@HeaderParam("token") String token,@FormParam("patientName") String patientName,
 			@FormParam("doctorName") String doctorName, @FormParam("hospitalName") String hospitalName,
 			@FormParam("description") String description) {
-		String output = app.insertAppoinment(patientName, doctorName, hospitalName, description);
-		return output;
+		
+		if(token != null) {
+			User u = JwtUtils.parseToken(token);
+			
+			if(u != null && u.getUserType().equals("appointment")) {
+				String output = app.insertAppoinment(patientName, doctorName, hospitalName, description);
+				return output;
+			}else {
+				return "UnAuthorized user";
+			}
+		}else {
+			return "UnAuthorized user";
+		}
+		
 	}
 
 	@PUT
-	@Path("/z")
+	@Path("/update")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
 	public String updateAppoinment(String appoinmentdata) { // Convert the input string to a JSON object
@@ -52,13 +88,13 @@ public class AppoinmentService {
 	}
 
 	@DELETE
-	@Path("/m")
+	@Path("/delete")
 	@Consumes(MediaType.APPLICATION_XML)
 	@Produces(MediaType.TEXT_PLAIN)
 	public String deleteItem(String appoinmentdata) { // Convert the input string to an XML document 
 		Document doc = Jsoup.parse(appoinmentdata, "", 
 				Parser.xmlParser()); //Read the value from the element <itemID> 
-		String appinmentId = doc.select("itemID").text();
+		String appinmentId = doc.select("appinmentId").text();
 		String output = app.deleteAppoinment(appinmentId);
 		return output;
 	}
@@ -71,10 +107,10 @@ public class AppoinmentService {
 				 @FormParam("password") String password)
 	{
 		System.out.println(username + " and " + password);
-		boolean output = app.readLogin(username, password);
-		System.out.println(output);
-		if(output) {
-			return "Login success!";
+		User user = app.readLogin(username, password);
+		
+		if(user != null ) {
+			return JwtUtils.generateToken(user);
 		}else {
 			return "Invalid credentials!";
 		}
@@ -100,6 +136,33 @@ public class AppoinmentService {
 		
 	}
 	
+//	@POST
+//	@Path("/Adlog")
+//	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+//	@Produces(MediaType.TEXT_PLAIN)
+//	public String insertPayment(@HeaderParam("token") String token, @FormParam("Card_holder") String Card_holder,
+//			@FormParam("Card_number") String Card_number, @FormParam("CVV") String CVV, @FormParam("Date") String Date,
+//			@FormParam("Total_amount") String Total_amount)
+//
+//	{
+//
+//		if(token != null) {
+//			User u = JwtUtils.parseToken(token);
+//			
+//			if(u != null && u.getUserType().equals("patient")) {
+//				String output = app.insertPayment(Card_holder, Card_number, CVV, Date, Total_amount);
+//				return output;
+//			}else {
+//				return "UnAuthorized user";
+//			}
+//		}else {
+//			return "UnAuthorized user";
+//		}
+//		
+//		
+//		
+//
+//	}
 	
 
 }
