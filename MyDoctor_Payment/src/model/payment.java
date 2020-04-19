@@ -189,35 +189,42 @@ public class payment {
 		
 	
 	
-	public boolean readLogin(String Patient_username, String Patient_password) {
+	public User readLogin(String Patient_username, String Patient_password) {
 		try{
 			Connection con = connect();
 			
 			if (con == null){
-				System.out.println("executed up before");
-				return false;
+				System.out.println("Executed before Comparison");
+				return null;
 			}
 		
 
 
 		// create a prepared statement
-			String query = "select Patient_password from patientdetails where Patient_username = '"+Patient_username+"'";
+			String query = "select * from patientdetails where Patient_username = '"+Patient_username+"'";
+			
+			
 			PreparedStatement preparedStmt = con.prepareStatement(query);
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
+			
 
 
 			while (rs.next()){
+				System.out.println(rs.getString("Patient_id"));
 	
+				User u = new User(rs.getString("Patient_id"), rs.getString("Patient_name"), rs.getString("Patient_username"), "patient");
+				
 				String password = rs.getString("Patient_password");
 	
 				if(password.equals(Patient_password)){
 					System.out.println("true from db");
-					return true;
+					return u;
 				}else{
 					System.out.println("false from db");
 				}
 			}
+			
 			
 			con.close();
 
@@ -225,38 +232,42 @@ public class payment {
 				System.err.println(e.getMessage());
 		}
 		
-		return false;
+		return null;
 			
 	}
 
 	
 	
 
-public boolean readAdminlogin(String Admin_username, String Admin_password) {
+public User readAdminlogin(String Admin_username, String Admin_password) {
 	try{
 		Connection con = connect();
 		
 		if (con == null){
-			System.out.println("executed up before");
-			return false;
+			System.out.println("Executed before Comparision");
+			return null;
 		}
 	
 
 
 	// create a prepared statement
-		String query = "select Admin_password from admin_details where Admin_username = '"+Admin_username+"'";
+		String query = "select * from admin_details where Admin_username = '"+Admin_username+"'";
 		PreparedStatement preparedStmt = con.prepareStatement(query);
 		Statement stmt = con.createStatement();
 		ResultSet rs = stmt.executeQuery(query);
 
 
 		while (rs.next()){
-
+			
+			System.out.println(rs.getString("Admin_id"));
+			
+			User u = new User(rs.getString("Admin_id"), rs.getString("Admin_name"), rs.getString("Admin_username"), "Admin");
+			
 			String password = rs.getString("Admin_password");
 
 			if(password.equals(Admin_password)){
 				System.out.println("true from db");
-				return true;
+				return u;
 			}else{
 				System.out.println("false from db");
 			}
@@ -268,9 +279,12 @@ public boolean readAdminlogin(String Admin_username, String Admin_password) {
 			System.err.println(e.getMessage());
 	}
 	
-	return false;
+	return null;
 		
 }
+
+
+
 }
 	
 	
